@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/10Dollar.unity
+  isLoaded: 1
+  isActive: 1
