@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iOS Test.CSharp", "iOS Test.CSharp.csproj", "{7816806B-FBAF-9EAE-CB38-2FBF561A2C89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iOS Test.CSharp.Editor", "iOS Test.CSharp.Editor.csproj", "{7FECC7A9-BF03-EA97-2152-CE7669570F80}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7816806B-FBAF-9EAE-CB38-2FBF561A2C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7816806B-FBAF-9EAE-CB38-2FBF561A2C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7816806B-FBAF-9EAE-CB38-2FBF561A2C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7816806B-FBAF-9EAE-CB38-2FBF561A2C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FECC7A9-BF03-EA97-2152-CE7669570F80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FECC7A9-BF03-EA97-2152-CE7669570F80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FECC7A9-BF03-EA97-2152-CE7669570F80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FECC7A9-BF03-EA97-2152-CE7669570F80}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

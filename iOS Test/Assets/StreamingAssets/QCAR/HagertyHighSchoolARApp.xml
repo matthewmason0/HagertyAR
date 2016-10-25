@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="planner" size="5.000000 8.876665" />
+    <ImageTarget name="10dollarbill" size="5.000000 2.120833" />
+  </Tracking>
+</QCARConfig>
