@@ -3,23 +3,21 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class GPS : MonoBehaviour {
-    Vector2 RealInit;
-    Vector2 RealCurrentPos;
-    Vector2 VirtualInit;
-    Vector2 VirtualCurrentPos;
+    Vector2 RInit;
+    Vector2 RCurrentPos;
+    Vector2 FInit;
+    Vector2 FCurrentPosition;
 
     public float scale;
     public bool FakingLocation;
 
-	// Use this for initialization
 	void Start () {
         Input.location.Start(0.5f);
         Input.compass.enabled = true;
 
-        VirtualInit = Vector2.zero;
+        FInit = Vector2.zero;
 	}
 	
-	// Update is called once per frame
 	IEnumerator UpdatePos () {
         if (Input.location.isEnabledByUser == false)
             Debug.Log("Failed because User did not enable location");
