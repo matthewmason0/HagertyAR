@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+
 public class GPS : MonoBehaviour {
     Vector2 RInit;
     Vector2 RCurrentPos;
@@ -21,7 +22,7 @@ public class GPS : MonoBehaviour {
 
     IEnumerator UpdatePosition()
     {
-        if (FakingLocation is false;
+        if (FakingLocation == false)
         {
             if (Input.location.isEnabledByUser == false)
             {
@@ -41,7 +42,7 @@ public class GPS : MonoBehaviour {
             }
             if (Input.location.status == LocationServiceStatus.Failed)
             {
-                Debug.Log("LocationInfo Servuse Status Failed!")
+                Debug.Log("LocationInfo Servuse Status Failed!");
                 yield return null;
             }
             else
@@ -49,13 +50,12 @@ public class GPS : MonoBehaviour {
                 SetLocation(Input.location.lastData.latitude, Input.location.lastData.longitude);
             }
         }
-         else
-         {
+        else
+        {
             SetLocation(100 + Time.time, 100 + Time.time);
         }
-
-
     }
+
     void SetLocation(float latitude, float longitude)
     {
         RCurrentPos = new Vector2(latitude, longitude);
