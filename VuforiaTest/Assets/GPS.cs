@@ -62,5 +62,6 @@ public class GPS : MonoBehaviour {
         Vector2 delta = new Vector2(RCurrentPos.x - RInit.x, RCurrentPos.y - RInit.y);
         FCurrentPosition = delta * scale;
         this.transform.position = new Vector3(FCurrentPosition.x, 0, FCurrentPosition.y);
+		GameObject.Find ("posText").GetComponent<Text> ().text = this.transform.position.x + " : " + this.transform.position.y + " : " + this.transform.position.z;
     }
 }
