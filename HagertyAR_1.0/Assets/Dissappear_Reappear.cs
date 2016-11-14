@@ -27,7 +27,7 @@ public class Dissappear_Reappear : MonoBehaviour {
     }
     // Update is called once per frame
 	void Update () {
-        Debug.Log("waiting");
+        //Debug.Log("waiting");
         if (Time.time > 10 && !fading)
         {
             FadeOut();
