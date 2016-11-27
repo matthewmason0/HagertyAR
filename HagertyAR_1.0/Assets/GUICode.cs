@@ -35,7 +35,14 @@ public class GUICode : MonoBehaviour
             float y = Mathf.Abs(0.05f * Mathf.Sin(1.2f * Time.time));
             currentRoomIcon.Obj.transform.localPosition = new Vector3(currentRoomIcon.Pos.x, currentRoomIcon.Pos.y + y, currentRoomIcon.Pos.z);
         }
-	}
+        //lockersIcon animation
+        if (lockersIconVisible)
+        {
+            currentLockersIcon.Obj.transform.Rotate(0, 0, 60 * Time.deltaTime);
+            float y = Mathf.Abs(0.05f * Mathf.Sin(1.2f * Time.time));
+            currentLockersIcon.Obj.transform.localPosition = new Vector3(currentLockersIcon.Pos.x, currentLockersIcon.Pos.y + y, currentLockersIcon.Pos.z);
+        }
+    }
 
     //reset moving icons and hidden second floor
     void stopSearching()
