@@ -1,56 +1,210 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-public class GUICode : MonoBehaviour {
+public class GUICode : MonoBehaviour
+{
+    //menu bools
     private bool visible = false;
     private bool mainMenu = true;
     private bool searchRooms = false;
     private bool searchLockers = false;
-    private string textInput = string.Empty;
+    //room bools
+    private string roomTextInput = string.Empty;
+    private Room currentRoomIcon = null;
+    private bool roomIconVisible = false;
+    private bool roomHelpText = false;
+    //lockers bools
+    private string lockersTextInput = string.Empty;
+    private Lockers currentLockersIcon;
+    private bool lockersIconVisible = false;
+    private bool lockersHelpText = false;
+
     // Use this for initialization
-    void Start () {
-	
+    void Start ()
+    {
+	    
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void Update ()
+    {
+        //roomIcon animation
+        if(roomIconVisible)
+        {
+            currentRoomIcon.Obj.transform.Rotate(0, 0, 60 * Time.deltaTime);
+            float y = Mathf.Abs(0.05f * Mathf.Sin(1.2f * Time.time));
+            currentRoomIcon.Obj.transform.localPosition = new Vector3(currentRoomIcon.Pos.x, currentRoomIcon.Pos.y + y, currentRoomIcon.Pos.z);
+        }
 	}
 
-    void OnGUI () {
+    //reset moving icons and hidden second floor
+    void stopSearching()
+    {
+        //reset the room icon if its moving
+        if (currentRoomIcon != null)
+        {
+            currentRoomIcon.Obj.transform.localPosition = new Vector3(currentRoomIcon.Pos.x, currentRoomIcon.Pos.y, currentRoomIcon.Pos.z);
+            currentRoomIcon.Obj.SetActive(false);
+        }
+        //reset the locker icon if its moving
+        if(currentLockersIcon != null)
+        {
+            currentLockersIcon.Obj.transform.localPosition = new Vector3(currentLockersIcon.Pos.x, currentLockersIcon.Pos.y, currentLockersIcon.Pos.z);
+            currentLockersIcon.Obj.SetActive(false);
+        }
+        currentRoomIcon = null;
+        roomIconVisible = false;
+        currentLockersIcon = null;
+        lockersIconVisible = false;
+        foreach (GameObject go in Dissappear_Reappear.secondFloor)
+            go.SetActive(true);
+    }
+
+    void OnGUI ()
+    {
         int guiW = Screen.width - 10;
         int guiH = Screen.height - 10;
         if (visible) //When the Menu is up
         {
+            //Background
             GUI.Box(new Rect(5, 5, guiW, guiH), "Menu");
+            //Dismiss
             if (GUI.Button(new Rect(Screen.width / 2 - 40, Screen.height - 30, 80, 20), "Dismiss"))
+            {
                 visible = false;
+                mainMenu = true;
+                searchRooms = false;
+                searchLockers = false;
+            }
+            //Search for a Room
             if (mainMenu && GUI.Button(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 20, 120, 20), "Search for a Room"))
             {
                 searchRooms = true;
                 mainMenu = false;
             }
-            if (searchRooms)
+            if (searchRooms) //Room Search Screen
             {
-                textInput = GUI.TextField(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 20, 120, 20), textInput);
+                //Textbox
+                roomTextInput = GUI.TextField(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 20, 120, 20), roomTextInput);
+                if(roomHelpText)
+                {
+                    GUI.Label(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 70, 120, 65), "Be sure to use the format bldg-room, i.e. 7-109.");
+                }
+                //Back
                 if (GUI.Button(new Rect(Screen.width / 2 - 25, Screen.height / 2 + 5, 50, 20), "Back"))
                 {
                     searchRooms = false;
                     mainMenu = true;
                 }
-                if (GUI.Button(new Rect(Screen.width / 2 + 30, Screen.height / 2 - 20, 20, 20), "Go"))
+                //Go
+                if (GUI.Button(new Rect(Screen.width / 2 + 65, Screen.height / 2 - 20, 30, 20), "Go"))
                 {
+                    stopSearching();
+                    Room room = null;
+                    bool found = false;
+                    //search for room
+                    foreach (Room r in Dissappear_Reappear.roomList)
+                        if (r.Number.Contains(roomTextInput))
+                        {
+                            found = true;
+                            room = r;
+                        }
+                    if (found)
+                    {
+                        mainMenu = true;
+                        searchRooms = false;
+                        visible = false;
+                        currentRoomIcon = room;
+                        currentRoomIcon.Obj.SetActive(true);
+                        roomIconVisible = true;
+                        roomHelpText = false;
+                        //check floor
+                        if (currentRoomIcon.Floor == 1) //first floor room
+                            foreach (GameObject go in Dissappear_Reappear.secondFloor)
+                                go.SetActive(false);
+                    }
+                    else
+                    {
+                        roomHelpText = true;
+                    }
+                    roomTextInput = string.Empty;
+                }
+            }
+            //Search for Lockers
+            if (mainMenu && GUI.Button(new Rect(Screen.width / 2 - 60, Screen.height / 2 + 5, 120, 20), "Search for Lockers"))
+            {
+                searchLockers = true;
+                mainMenu = false;
+            }
+            if (searchLockers) //Locker Search Screen
+            {
+                //Textbox
+                lockersTextInput = GUI.TextField(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 20, 120, 20), lockersTextInput);
+                if (lockersHelpText)
+                {
+                    GUI.Label(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 70, 120, 65), "Be sure to type a valid locker number, i.e. 718");
+                }
+                //Back
+                if (GUI.Button(new Rect(Screen.width / 2 - 25, Screen.height / 2 + 5, 50, 20), "Back"))
+                {
+                    searchLockers = false;
                     mainMenu = true;
-                    searchRooms = false;
-                    visible = false;
+                }
+                //Go
+                if (GUI.Button(new Rect(Screen.width / 2 + 65, Screen.height / 2 - 20, 30, 20), "Go"))
+                {
+                    stopSearching();
+                    Lockers lockers = null;
+                    bool found = false;
+                    //search for locker
+                    foreach (Lockers l in Dissappear_Reappear.lockersList)
+                    {
+                        int temp;
+                        if (int.TryParse(lockersTextInput, out temp) && l.Lowest <= temp && l.Highest >= temp)
+                        {
+                            found = true;
+                            lockers = l;
+                        }
+                    }
+                    if (found)
+                    {
+                        mainMenu = true;
+                        searchLockers = false;
+                        visible = false;
+                        currentLockersIcon = lockers;
+                        currentLockersIcon.Obj.SetActive(true);
+                        lockersIconVisible = true;
+                        lockersHelpText = false;
+                        //check floor
+                        if (currentLockersIcon.Floor == 1) //first floor lockers
+                            foreach (GameObject go in Dissappear_Reappear.secondFloor)
+                                go.SetActive(false);
+
+                    }
+                    else
+                    {
+                        lockersHelpText = true;
+                    }
+                    lockersTextInput = string.Empty;
                 }
             }
         }
         else //Menu is hidden
         {
-            if (GUI.Button(new Rect(Screen.width-55, 5, 50, 20), "Menu"))
+            //Menu
+            if (GUI.Button(new Rect(Screen.width - 55, 5, 50, 20), "Menu"))
+            {
                 visible = true;
                 mainMenu = true;
+            }
+            if (roomIconVisible || lockersIconVisible)
+            {
+                //Stop Searching
+                if (GUI.Button(new Rect(Screen.width - 115, Screen.height - 25, 110, 20), "Stop Searching"))
+                {
+                    stopSearching();
+                }
+            }
         }
     }
 }
