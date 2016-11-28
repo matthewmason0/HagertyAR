@@ -18,6 +18,9 @@ public class GUICode : MonoBehaviour
     private Lockers currentLockersIcon;
     private bool lockersIconVisible = false;
     private bool lockersHelpText = false;
+    //scaling
+    private int native_width = 144;
+    private int native_height = 256;
 
     // Use this for initialization
     void Start ()
@@ -69,14 +72,20 @@ public class GUICode : MonoBehaviour
 
     void OnGUI ()
     {
-        int guiW = Screen.width - 10;
-        int guiH = Screen.height - 10;
+        //set up scaling
+        float rx = Screen.width / (float)native_width;
+        float ry = Screen.height / (float)native_height;
+        GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(rx, ry, 1));
+        //now create your GUI normally, as if you were in your native resolution
+        //The GUI.matrix will scale everything automatically.
+        int guiW = native_width - 10;
+        int guiH = native_height - 10;
         if (visible) //When the Menu is up
         {
             //Background
             GUI.Box(new Rect(5, 5, guiW, guiH), "Menu");
             //Dismiss
-            if (GUI.Button(new Rect(Screen.width / 2 - 40, Screen.height - 30, 80, 20), "Dismiss"))
+            if (GUI.Button(new Rect(native_width / 2 - 40, native_height - 30, 80, 20), "Dismiss"))
             {
                 visible = false;
                 mainMenu = true;
@@ -84,7 +93,7 @@ public class GUICode : MonoBehaviour
                 searchLockers = false;
             }
             //Search for a Room
-            if (mainMenu && GUI.Button(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 20, 120, 20), "Search for a Room"))
+            if (mainMenu && GUI.Button(new Rect(native_width / 2 - 60, native_height / 2 - 20, 120, 20), "Search for a Room"))
             {
                 searchRooms = true;
                 mainMenu = false;
@@ -92,19 +101,19 @@ public class GUICode : MonoBehaviour
             if (searchRooms) //Room Search Screen
             {
                 //Textbox
-                roomTextInput = GUI.TextField(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 20, 120, 20), roomTextInput);
+                roomTextInput = GUI.TextField(new Rect(native_width / 2 - 60, native_height / 2 - 20, 120, 20), roomTextInput);
                 if(roomHelpText)
                 {
-                    GUI.Label(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 70, 120, 65), "Be sure to use the format bldg-room, i.e. 7-109.");
+                    GUI.Label(new Rect(native_width / 2 - 60, native_height / 2 - 70, 120, 65), "Be sure to use the format bldg-room, i.e. 7-109.");
                 }
                 //Back
-                if (GUI.Button(new Rect(Screen.width / 2 - 25, Screen.height / 2 + 5, 50, 20), "Back"))
+                if (GUI.Button(new Rect(native_width / 2 - 25, native_height / 2 + 5, 50, 20), "Back"))
                 {
                     searchRooms = false;
                     mainMenu = true;
                 }
                 //Go
-                if (GUI.Button(new Rect(Screen.width / 2 + 65, Screen.height / 2 - 20, 30, 20), "Go"))
+                if (GUI.Button(new Rect(native_width / 2 + 65, native_height / 2 - 20, 30, 20), "Go"))
                 {
                     stopSearching();
                     Room room = null;
@@ -138,7 +147,7 @@ public class GUICode : MonoBehaviour
                 }
             }
             //Search for Lockers
-            if (mainMenu && GUI.Button(new Rect(Screen.width / 2 - 60, Screen.height / 2 + 5, 120, 20), "Search for Lockers"))
+            if (mainMenu && GUI.Button(new Rect(native_width / 2 - 60, native_height / 2 + 5, 120, 20), "Search for Lockers"))
             {
                 searchLockers = true;
                 mainMenu = false;
@@ -146,19 +155,19 @@ public class GUICode : MonoBehaviour
             if (searchLockers) //Locker Search Screen
             {
                 //Textbox
-                lockersTextInput = GUI.TextField(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 20, 120, 20), lockersTextInput);
+                lockersTextInput = GUI.TextField(new Rect(native_width / 2 - 60, native_height / 2 - 20, 120, 20), lockersTextInput);
                 if (lockersHelpText)
                 {
-                    GUI.Label(new Rect(Screen.width / 2 - 60, Screen.height / 2 - 70, 120, 65), "Be sure to type a valid locker number, i.e. 718");
+                    GUI.Label(new Rect(native_width / 2 - 60, native_height / 2 - 70, 120, 65), "Be sure to type a valid locker number, i.e. 718");
                 }
                 //Back
-                if (GUI.Button(new Rect(Screen.width / 2 - 25, Screen.height / 2 + 5, 50, 20), "Back"))
+                if (GUI.Button(new Rect(native_width / 2 - 25, native_height / 2 + 5, 50, 20), "Back"))
                 {
                     searchLockers = false;
                     mainMenu = true;
                 }
                 //Go
-                if (GUI.Button(new Rect(Screen.width / 2 + 65, Screen.height / 2 - 20, 30, 20), "Go"))
+                if (GUI.Button(new Rect(native_width / 2 + 65, native_height / 2 - 20, 30, 20), "Go"))
                 {
                     stopSearching();
                     Lockers lockers = null;
@@ -199,7 +208,7 @@ public class GUICode : MonoBehaviour
         else //Menu is hidden
         {
             //Menu
-            if (GUI.Button(new Rect(Screen.width - 55, 5, 50, 20), "Menu"))
+            if (GUI.Button(new Rect(native_width - 55, 5, 50, 20), "Menu"))
             {
                 visible = true;
                 mainMenu = true;
@@ -207,7 +216,7 @@ public class GUICode : MonoBehaviour
             if (roomIconVisible || lockersIconVisible)
             {
                 //Stop Searching
-                if (GUI.Button(new Rect(Screen.width - 115, Screen.height - 25, 110, 20), "Stop Searching"))
+                if (GUI.Button(new Rect(native_width - 115, native_height - 25, 110, 20), "Stop Searching"))
                 {
                     stopSearching();
                 }

@@ -11,7 +11,7 @@ public class Room {
         this.Number = Number;
         //check floor
         string[] temp = Number.Split('-');
-        if (temp[1].Substring(0, 1).Equals("1")) //first floor room
+        if (!temp[0].Contains("Portable") && temp[1].Substring(0, 1).Equals("1")) //first floor room
             this.Floor = 1;
         else //second floor room
             this.Floor = 2;
