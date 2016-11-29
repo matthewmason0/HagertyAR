@@ -19,8 +19,8 @@ public class GUICode : MonoBehaviour
     private bool lockersIconVisible = false;
     private bool lockersHelpText = false;
     //scaling
-    private int native_width = 144;
-    private int native_height = 256;
+    private int native_width = 216;
+    private int native_height = 384;
 
     // Use this for initialization
     void Start ()
