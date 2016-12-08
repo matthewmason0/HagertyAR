@@ -31,6 +31,15 @@ public class Dissappear_Reappear : MonoBehaviour {
             roomList.Add(new Room(number, go, go.transform.localPosition));
         }
 
+        //temp
+        string output = string.Empty;
+        GameObject[] rms = GameObject.FindGameObjectsWithTag("Temp");
+        foreach (GameObject go in rms)
+        {
+            output += go.name + "\n";//"\""+go.name + "\", ";
+        }
+        Debug.Log(output);
+
         //hide named icons
         foreach (Room room in roomList)
             room.Obj.SetActive(false);

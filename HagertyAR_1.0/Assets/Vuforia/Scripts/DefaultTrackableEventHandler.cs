@@ -68,6 +68,8 @@ namespace Vuforia
 
         private void OnTrackingFound()
         {
+            GUICode.intro = false;
+
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 
