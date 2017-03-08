@@ -73,20 +73,21 @@ public class GUICode : MonoBehaviour
 
     void OnGUI()
     {
+        //set up scaling
+        float rx = Screen.width / (float)native_width;
+        float ry = Screen.height / (float)native_height;
+        GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(rx, ry, 1));
+        //now create your GUI normally, as if you were in your native resolution
+        //The GUI.matrix will scale everything automatically.
+        int guiW = native_width - 10;
+        int guiH = native_height - 10;
         if (intro)
         {
             GUI.Label(new Rect(5, 5, native_width - 10, native_height - 10), "Place the campus map in view of the camera to get started.");
         }
         else
         {
-            //set up scaling
-            float rx = Screen.width / (float)native_width;
-            float ry = Screen.height / (float)native_height;
-            GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(rx, ry, 1));
-            //now create your GUI normally, as if you were in your native resolution
-            //The GUI.matrix will scale everything automatically.
-            int guiW = native_width - 10;
-            int guiH = native_height - 10;
+            
             if (visible) //When the Menu is up
             {
                 //Background
