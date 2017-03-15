@@ -90,9 +90,51 @@ public class GUICode : MonoBehaviour
         //The GUI.matrix will scale everything automatically.
         int guiW = native_width - 10;
         int guiH = native_height - 10;
+
+
+        switch(state)
+        {
+            case State.INTRO:
+                GUI.Label(new Rect(5, 5, native_width - 10, native_height - 10), "Place the campus map in view of the camera to get started.");
+                break;
+
+            case State.CLOSED:
+                //Menu
+                if (GUI.Button(new Rect(native_width - 55, 5, 50, 20), "Menu"))
+                    state = State.OPEN;
+                if (roomIconVisible || lockersIconVisible)
+                    //Stop Searching
+                    if (GUI.Button(new Rect(native_width - 115, native_height - 25, 110, 20), "Stop Searching"))
+                        stopSearching();
+                break;
+
+            case State.OPEN:
+                //Background
+                GUI.Box(new Rect(5, 5, guiW, guiH), "Menu");
+                //Dismiss
+                if (GUI.Button(new Rect(native_width / 2 - 40, native_height - 30, 80, 20), "Dismiss"))
+                    state = State.CLOSED;
+                //Search for a Room
+                if (mainMenu && GUI.Button(new Rect(native_width / 2 - 60, native_height / 2 - 20, 120, 20), "Search for a Room"))
+                    state = State.ROOM;
+                //Search for Lockers
+                if (mainMenu && GUI.Button(new Rect(native_width / 2 - 60, native_height / 2 + 5, 120, 20), "Search for Lockers"))
+                    state = State.LOCKER;
+                break;
+
+            case State.ROOM:
+
+                break;
+
+            case State.LOCKER:
+
+                break;
+        }
+
+
         if (intro)
         {
-            GUI.Label(new Rect(5, 5, native_width - 10, native_height - 10), "Place the campus map in view of the camera to get started.");
+            
         }
         else
         {
