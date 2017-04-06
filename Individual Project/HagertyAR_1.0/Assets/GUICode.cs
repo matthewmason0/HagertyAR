@@ -14,8 +14,9 @@ public class GUICode : MonoBehaviour
     private bool lockersIconVisible = false;
     private bool lockersHelpText = false;
     //scaling
-    private int native_width = 216;
-    private int native_height = 384;
+    [SerializeField] private Font font;
+    private int native_width = 1080; //was 216
+    private int native_height = 1920; //was 384
 
     public enum State
     {
@@ -54,69 +55,70 @@ public class GUICode : MonoBehaviour
     void OnGUI()
     {
         //set up scaling
+        GUI.skin.font = font;
         float rx = Screen.width / (float)native_width;
         float ry = Screen.height / (float)native_height;
-        float extrax = 0;
-        float extray = 0;
-        if (rx < ry) //screen is too tall
+        float x_to_y = rx / ry;
+        float y_to_x = ry / rx;
+        float extrax = (Screen.width - (Screen.width / x_to_y)) / 2;
+        float extray = (Screen.height - (Screen.height / y_to_x)) / 2;
+        if (rx > ry) //screen is too short
         {
-            extray = (Screen.height - native_height) / 2;
-            ry = rx;
-        }
-        else         //screen is too short
-        {
-            extrax = (rx / ry - 1) * Screen.width / 2;
             rx = ry;
+            extray = 0;
+        }
+        else         //screen is too tall
+        {
+            ry = rx;
+            extrax = 0;
         }
         GUI.matrix = Matrix4x4.TRS(new Vector3(extrax, extray, 0), Quaternion.identity, new Vector3(rx, ry, 1));
-        //now create your GUI normally, as if you were in your native resolution
-        //The GUI.matrix will scale everything automatically.
         //gui variables
-        int guiW = native_width - 10;
-        int guiH = native_height - 10;
+        int guiW = native_width - 50;
+        int guiH = native_height - 50;
 
         switch (state)
         {
 
             case State.INTRO:
-                GUI.Label(new Rect(5, 5, native_width - 10, native_height - 10), "Place the campus map in view of the camera to get started.");
+                GUI.Label(new Rect(25, 25, native_width - 50, native_height - 50), "Place the campus map in view of the camera to get started.");
                 break;
 
 
             case State.CLOSED:
                 //Menu
-                if (GUI.Button(new Rect(native_width - 55, 5, 50, 20), "Menu"))
+                if (GUI.Button(new Rect(native_width - 275, 25, 250, 100), "Menu"))
                     state = State.OPEN;
                 if (roomIconVisible || lockersIconVisible)
                     //Stop Searching
-                    if (GUI.Button(new Rect(native_width - 115, native_height - 25, 110, 20), "Stop Searching"))
+                    if (GUI.Button(new Rect(native_width - 575, native_height - 125, 550, 100), "Stop Searching"))
                         stopSearching();
                 break;
 
 
             case State.OPEN:
                 //Background
-                GUI.Box(new Rect(5, 5, guiW, guiH), "Menu");
+                GUI.Box(new Rect(25, 25, guiW, guiH), "Menu");
                 //Search for a Room
-                if (GUI.Button(new Rect(native_width / 2 - 60, native_height / 2 - 20, 120, 20), "Search for a Room"))
+                if (GUI.Button(new Rect(native_width / 2 - 300, native_height / 2 - 100, 600, 100), "Search for a Room"))
                     state = State.ROOM;
                 //Search for Lockers
-                if (GUI.Button(new Rect(native_width / 2 - 60, native_height / 2 + 5, 120, 20), "Search for Lockers"))
+                if (GUI.Button(new Rect(native_width / 2 - 300, native_height / 2 + 25, 600, 100), "Search for Lockers"))
                     state = State.LOCKER;
                 break;
 
 
             case State.ROOM:
                 //Textbox
-                roomTextInput = GUI.TextField(new Rect(native_width / 2 - 60, native_height / 2 - 20, 120, 20), roomTextInput);
+                roomTextInput = GUI.TextField(new Rect(native_width / 2 - 300, native_height / 2 - 100, 600, 100), roomTextInput);
                 //Display help text if query not found
                 if (roomHelpText)
-                    GUI.Label(new Rect(native_width / 2 - 60, native_height / 2 - 70, 120, 65), "Be sure to use the format bldg-room, i.e. 7-109.");
+                    GUI.Label(new Rect(native_width / 2 - 300, native_height / 2 - 350, 600, 325), "Be sure to use the format bldg-room, i.e. 7-109.");
                 //Back
-                if (GUI.Button(new Rect(native_width / 2 - 25, native_height / 2 + 5, 50, 20), "Back"))
+                if (GUI.Button(new Rect(native_width / 2 - 125, native_height / 2 + 25, 250, 100), "Back"))
                     state = State.OPEN;
                 //Go
-                if (GUI.Button(new Rect(native_width / 2 + 65, native_height / 2 - 20, 30, 20), "Go"))
+                if (GUI.Button(new Rect(native_width / 2 + 325, native_height / 2 - 100, 150, 100), "Go"))
                 {
                     stopSearching();
                     searchRooms();
@@ -126,15 +128,15 @@ public class GUICode : MonoBehaviour
 
             case State.LOCKER:
                 //Textbox
-                lockersTextInput = GUI.TextField(new Rect(native_width / 2 - 60, native_height / 2 - 20, 120, 20), lockersTextInput);
+                lockersTextInput = GUI.TextField(new Rect(native_width / 2 - 300, native_height / 2 - 100, 600, 100), lockersTextInput);
                 //Display help text if query not found
                 if (lockersHelpText)
-                    GUI.Label(new Rect(native_width / 2 - 60, native_height / 2 - 70, 120, 65), "Be sure to type a valid locker number, i.e. 718");
+                    GUI.Label(new Rect(native_width / 2 - 300, native_height / 2 - 350, 600, 325), "Be sure to type a valid locker number, i.e. 718");
                 //Back
-                if (GUI.Button(new Rect(native_width / 2 - 25, native_height / 2 + 5, 50, 20), "Back"))
+                if (GUI.Button(new Rect(native_width / 2 - 125, native_height / 2 + 25, 250, 100), "Back"))
                     state = State.OPEN;
                 //Go
-                if (GUI.Button(new Rect(native_width / 2 + 65, native_height / 2 - 20, 30, 20), "Go"))
+                if (GUI.Button(new Rect(native_width / 2 + 325, native_height / 2 - 100, 150, 100), "Go"))
                 {
                     stopSearching();
                     searchLockers();
@@ -145,7 +147,7 @@ public class GUICode : MonoBehaviour
 
         //Dismiss
         if (state != State.CLOSED)
-            if (GUI.Button(new Rect(native_width / 2 - 40, native_height - 30, 80, 20), "Dismiss"))
+            if (GUI.Button(new Rect(native_width / 2 - 200, native_height - 150, 400, 100), "Dismiss"))
                 state = State.CLOSED;
     }
 
