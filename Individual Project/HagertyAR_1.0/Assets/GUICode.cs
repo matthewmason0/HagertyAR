@@ -14,7 +14,8 @@ public class GUICode : MonoBehaviour
     private bool lockersIconVisible = false;
     private bool lockersHelpText = false;
     //scaling
-    [SerializeField] private GUISkin skin;
+	[SerializeField]
+	private int fontSize = 20;
     private int native_width = 1080; //was 216
     private int native_height = 1920; //was 384
 
@@ -55,7 +56,10 @@ public class GUICode : MonoBehaviour
     void OnGUI()
     {
         //set up scaling
-		GUI.skin = skin;
+		GUI.skin.button.fontSize = fontSize;
+		GUI.skin.box.fontSize = fontSize;
+		GUI.skin.label.fontSize = fontSize;
+		GUI.skin.textField.fontSize = fontSize;
         float rx = Screen.width / (float)native_width;
         float ry = Screen.height / (float)native_height;
         float x_to_y = rx / ry;
