@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Vuforia;
 
 public class GUICode : MonoBehaviour
 {
@@ -14,10 +15,13 @@ public class GUICode : MonoBehaviour
     private bool lockersIconVisible = false;
     private bool lockersHelpText = false;
     //scaling
-	[SerializeField]
-	private int fontSize = 20;
+	private const int fontSize = 50;
     private int native_width = 1080; //was 216
     private int native_height = 1920; //was 384
+    //zooming
+    private Camera camera;
+    public float perspectiveZoomSpeed = 0.5f;
+    public float orthoZoomSpeed = 0.5f;
 
     public enum State
     {
@@ -25,13 +29,15 @@ public class GUICode : MonoBehaviour
         CLOSED,
         OPEN,
         ROOM,
-        LOCKER
+        LOCKER,
+        FROZEN
     }
     public static State state = State.INTRO;
 
     // Use this for initialization
     void Start()
     {
+        camera = Camera.main;
     }
 
     // Update is called once per frame
@@ -50,6 +56,43 @@ public class GUICode : MonoBehaviour
             currentLockersIcon.Obj.transform.Rotate(0, 0, 60 * Time.deltaTime);
             float y = Mathf.Abs(0.05f * Mathf.Sin(1.2f * Time.time));
             currentLockersIcon.Obj.transform.localPosition = new Vector3(currentLockersIcon.Pos.x, currentLockersIcon.Pos.y + y, currentLockersIcon.Pos.z);
+        }
+        //zooming
+        // If there are two touches on the device...
+        if (Input.touchCount == 2)
+        {
+            // Store both touches.
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
+
+            // Find the position in the previous frame of each touch.
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            // Find the magnitude of the vector (the distance) between the touches in each frame.
+            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+            // Find the difference in the distances between each frame.
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+            // If the camera is orthographic...
+            if (camera.orthographic)
+            {
+                // ... change the orthographic size based on the change in distance between the touches.
+                camera.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
+
+                // Make sure the orthographic size never drops below zero.
+                camera.orthographicSize = Mathf.Max(camera.orthographicSize, 0.1f);
+            }
+            else
+            {
+                // Otherwise change the field of view based on the change in distance between the touches.
+                camera.fieldOfView += deltaMagnitudeDiff * perspectiveZoomSpeed;
+
+                // Clamp the field of view to make sure it's between 0 and 180.
+                camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 0.1f, 179.9f);
+            }
         }
     }
 
@@ -93,6 +136,13 @@ public class GUICode : MonoBehaviour
                 //Menu
                 if (GUI.Button(new Rect(native_width - 275, 25, 250, 100), "Menu"))
                     state = State.OPEN;
+                //Freeze
+                if (GUI.Button(new Rect(native_width / 2 - 200, native_height - 150, 400, 100), "Freeze"))
+                {
+                    state = State.FROZEN;
+                    foreach (TrackableBehaviour tb in FindObjectsOfType(typeof(TrackableBehaviour)))
+                        tb.enabled = false;
+                }
                 if (roomIconVisible || lockersIconVisible)
                     //Stop Searching
                     if (GUI.Button(new Rect(native_width - 575, native_height - 125, 550, 100), "Stop Searching"))
@@ -117,7 +167,7 @@ public class GUICode : MonoBehaviour
                 roomTextInput = GUI.TextField(new Rect(native_width / 2 - 300, native_height / 2 - 100, 600, 100), roomTextInput);
                 //Display help text if query not found
                 if (roomHelpText)
-                    GUI.Label(new Rect(native_width / 2 - 300, native_height / 2 - 350, 600, 325), "Be sure to use the format bldg-room, i.e. 7-109.");
+                    GUI.Label(new Rect(native_width / 2 - 300, native_height / 2 - 350, 600, 325), "Be sure to use the format bldg-room, e.g. 7-109.");
                 //Back
                 if (GUI.Button(new Rect(native_width / 2 - 125, native_height / 2 + 25, 250, 100), "Back"))
                     state = State.OPEN;
@@ -135,7 +185,7 @@ public class GUICode : MonoBehaviour
                 lockersTextInput = GUI.TextField(new Rect(native_width / 2 - 300, native_height / 2 - 100, 600, 100), lockersTextInput);
                 //Display help text if query not found
                 if (lockersHelpText)
-                    GUI.Label(new Rect(native_width / 2 - 300, native_height / 2 - 350, 600, 325), "Be sure to type a valid locker number, i.e. 718");
+                    GUI.Label(new Rect(native_width / 2 - 300, native_height / 2 - 350, 600, 325), "Be sure to type a valid locker number, e.g. 718");
                 //Back
                 if (GUI.Button(new Rect(native_width / 2 - 125, native_height / 2 + 25, 250, 100), "Back"))
                     state = State.OPEN;
@@ -147,10 +197,24 @@ public class GUICode : MonoBehaviour
                 }
                 break;
 
+
+            case State.FROZEN:
+                //Menu
+                if (GUI.Button(new Rect(native_width - 275, 25, 250, 100), "Menu"))
+                    state = State.OPEN;
+                //Unfreeze
+                if (GUI.Button(new Rect(native_width / 2 - 200, native_height - 150, 400, 100), "Unfreeze"))
+                {
+                    state = State.CLOSED;
+                    foreach (TrackableBehaviour tb in FindObjectsOfType(typeof(TrackableBehaviour)))
+                        tb.enabled = true;
+                }
+                break;
+
         }
 
         //Dismiss
-        if (state != State.CLOSED)
+        if (state != State.CLOSED && state != State.FROZEN)
             if (GUI.Button(new Rect(native_width / 2 - 200, native_height - 150, 400, 100), "Dismiss"))
                 state = State.CLOSED;
     }
